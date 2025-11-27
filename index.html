@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Klock Engenharia e Topografia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Klock Engenharia e Topografia - Eng. Agrimensor, topografia, locação de obras, levantamento planialtimétrico e georreferenciamento." />
+  <style>
+    :root {
+      --bg: #020617;
+      --card: #020617;
+      --accent: #f97316;
+      --accent-soft: rgba(249, 115, 22, 0.25);
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --border: rgba(148, 163, 184, 0.4);
+      --green: #22c55e;
+      --blue: #38bdf8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #0b1120, #020617 60%, #000 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    main {
+      width: 100%;
+      max-width: 900px;
+      background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.12), transparent 60%),
+        radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.16), transparent 55%),
+        rgba(15, 23, 42, 0.98);
+      border-radius: 28px;
+      padding: 24px 20px 28px;
+      box-shadow:
+        0 25px 60px -20px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(148, 163, 184, 0.2);
+      backdrop-filter: blur(18px);
+      display: grid;
+      grid-template-columns: minmax(0, 2.2fr) minmax(0, 2.5fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 768px) {
+      main {
+        grid-template-columns: 1fr;
+        padding: 20px 16px 24px;
+        border-radius: 22px;
+      }
+    }
+
+    .left, .right { min-width: 0; }
+
+    /* Cabeçalho */
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .avatar {
+      width: 76px;
+      height: 76px;
+      border-radius: 999px;
+      padding: 2px;
+      background: #020b33;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        0 0 0 2px rgba(15, 23, 42, 0.9),
+        0 0 40px -10px rgba(249, 115, 22, 0.6);
+      flex-shrink: 0;
+    }
+
+    .avatar-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 2px solid #020617;
+      background: #020617;
+    }
+
+    .avatar-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .title-block h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .title-block .handle {
+      font-size: 0.86rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .title-block .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.45);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #bbf7d0;
+    }
+
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.3);
+    }
+
+    .bio {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #e5e7eb;
+      line-height: 1.4;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0 18px;
+    }
+
+    .chip {
+      font-size: 0.78rem;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      color: #e5e7eb;
+      background: radial-gradient(circle at top left, rgba(148, 163, 184, 0.35), rgba(15, 23, 42, 0.95));
+    }
+
+    .chip strong { color: #fbbf24; font-weight: 600; }
+
+    .stats {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .stat {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(248, 250, 252, 0.14), transparent 60%);
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      color: var(--muted);
+      letter-spacing: 0.14em;
+      margin-bottom: 3px;
+    }
+
+    .stat-value {
+      font-size: 0.98rem;
+      font-weight: 600;
+    }
+
+    .stat-note {
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .links {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid var(--border);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: all 0.15s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .link::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top left, var(--accent-soft), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.15s ease-out;
+      pointer-events: none;
+    }
+
+    .link span.label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 1;
+    }
+
+    .link span.icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      background: #111827;
+    }
+
+    .link-primary {
+      border-color: var(--accent);
+      box-shadow:
+        0 0 0 1px rgba(249, 115, 22, 0.7),
+        0 15px 30px -18px rgba(249, 115, 22, 0.9);
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.16), rgba(15, 23, 42, 0.98));
+    }
+
+    .link-primary span.icon { background: var(--accent); }
+    .link-whatsapp span.icon { background: #22c55e; }
+    .link-instagram span.icon {
+      background: linear-gradient(135deg, #f97316, #ec4899, #6366f1);
+    }
+
+    .link:hover {
+      transform: translateY(-1px);
+      border-color: var(--accent);
+      box-shadow: 0 14px 32px -20px rgba(0, 0, 0, 0.9);
+    }
+
+    .link:hover::before { opacity: 0.7; }
+
+    .right-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      gap: 10px;
+    }
+
+    .right-header h2 {
+      font-size: 0.98rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+    }
+
+    .pill {
+      font-size: 0.75rem;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.7);
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.35), rgba(15, 23, 42, 0.98));
+      color: #e0f2fe;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #38bdf8;
+    }
+
+    .services {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .service {
+      padding: 10px;
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      font-size: 0.78rem;
+      line-height: 1.4;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .service::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(248, 250, 252, 0.12), transparent 60%);
+      opacity: 0.8;
+      pointer-events: none;
+    }
+
+    .service-title {
+      font-weight: 600;
+      margin-bottom: 3px;
+      font-size: 0.8rem;
+    }
+
+    .service-tag {
+      display: inline-flex;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .highlights {
+      font-size: 0.8rem;
+      color: #e5e7eb;
+      margin-bottom: 14px;
+    }
+
+    .highlights ul {
+      list-style: none;
+      margin-top: 6px;
+    }
+
+    .highlights li {
+      display: flex;
+      gap: 6px;
+      align-items: flex-start;
+      margin-bottom: 4px;
+      font-size: 0.78rem;
+    }
+
+    .highlights li span.bullet {
+      color: #22c55e;
+      margin-top: 1px;
+    }
+
+    .cta-box {
+      padding: 10px 11px;
+      border-radius: 14px;
+      border: 1px dashed rgba(148, 163, 184, 0.7);
+      background: radial-gradient(circle at left, rgba(249, 115, 22, 0.2), transparent 60%);
+      font-size: 0.8rem;
+      color: #e5e7eb;
+    }
+
+    .cta-box strong { color: #fed7aa; }
+    .cta-box span.whats { color: #bbf7d0; font-weight: 500; }
+
+    .footer {
+      grid-column: 1 / -1;
+      text-align: center;
+      margin-top: 12px;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .footer span.brand { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <main>
+    <!-- ESQUERDA: perfil + links -->
+    <section class="left">
+      <div class="header">
+        <div class="avatar">
+          <div class="avatar-inner">
+            <!-- Coloque o arquivo da logo na mesma pasta e use esse nome -->
+            <img src="Imagem do WhatsApp 2023-03-13 às 13.06.56.jpeg" alt="Klock Engenharia e Topografia">
+          </div>
+        </div>
+        <div class="title-block">
+          <h1>Klock Engenharia e Topografia</h1>
+          <div class="handle">@klock_engenharia</div>
+          <div class="badge">
+            <span class="badge-dot"></span>
+            Eng. Agrimensor · Topografia
+          </div>
+        </div>
+      </div>
+
+      <p class="bio">
+        Eng. Agrimensor especializado em <strong>topografia aplicada à engenharia</strong>:
+        locação de obras, levantamentos planialtimétricos, georreferenciamento e apoio
+        técnico para projetos urbanos e rurais.
+      </p>
+
+      <div class="chips">
+        <span class="chip">⛰ <strong>Topografia</strong> de precisão</span>
+        <span class="chip">📐 Locação de obras</span>
+        <span class="chip">🛰 Georreferenciamento</span>
+        <span class="chip">🏗 Apoio a projetos e terraplenagem</span>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">Instagram</div>
+          <div class="stat-value">+200 seguidores</div>
+          <div class="stat-note">Conteúdo técnico e de campo</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Atuação</div>
+          <div class="stat-value">Engenharia & Agrimensura</div>
+          <div class="stat-note">Atendimento regional</div>
+        </div>
+      </div>
+
+      <div class="links">
+        <!-- WHATSAPP com seu número: 48 99953-3126 -->
+        <a class="link link-primary link-whatsapp" href="https://wa.me/5548999533126" target="_blank" rel="noopener">
+          <span class="label">
+            <span class="icon">💬</span>
+            <span>Solicitar orçamento pelo WhatsApp</span>
+          </span>
+          <span>➜</span>
+        </a>
+
+        <!-- INSTAGRAM -->
+        <a class="link link-instagram" href="https://www.instagram.com/klock_engenharia" target="_blank" rel="noopener">
+          <span class="label">
+            <span class="icon">📸</span>
+            <span>Ver mais trabalhos no Instagram</span>
+          </span>
+          <span>➜</span>
+        </a>
+
+        <!-- E-mail (ajuste se quiser) -->
+        <a class="link" href="mailto:contato@klockengenharia.com">
+          <span class="label">
+            <span class="icon">✉️</span>
+            <span>Enviar e-mail profissional</span>
+          </span>
+          <span>➜</span>
+        </a>
+
+        <!-- Portfólio / laudos (coloque link real se tiver) -->
+        <a class="link" href="#" target="_blank" rel="noopener">
+          <span class="label">
+            <span class="icon">📂</span>
+            <span>Baixar portfólio / laudos de exemplo</span>
+          </span>
+          <span>➜</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- DIREITA: serviços -->
+    <section class="right">
+      <div class="right-header">
+        <h2>Serviços de topografia</h2>
+        <span class="pill">
+          <span class="pill-dot"></span>
+          Engenharia de precisão em campo
+        </span>
+      </div>
+
+      <div class="services">
+        <div class="service">
+          <div class="service-tag">Obras</div>
+          <div class="service-title">Locação de obras</div>
+          <p>
+            Eixos, níveis, alinhamentos e conferência de projeto diretamente em campo
+            para execução segura e dentro das tolerâncias.
+          </p>
+        </div>
+        <div class="service">
+          <div class="service-tag">Levantamentos</div>
+          <div class="service-title">Levantamento planialtimétrico</div>
+          <p>
+            Geração de planta topográfica detalhada para projetos de loteamentos,
+            terraplenagem, drenagem, estradas e edificações.
+          </p>
+        </div>
+        <div class="service">
+          <div class="service-tag">Rural / Urbano</div>
+          <div class="service-title">Georreferenciamento</div>
+          <p>
+            Apoio à regularização de imóveis, confrontações e atualização de cadastro
+            com base em normas técnicas.
+          </p>
+        </div>
+        <div class="service">
+          <div class="service-tag">Consultoria</div>
+          <div class="service-title">Apoio a projetos</div>
+          <p>
+            Análise de viabilidade, compatibilização de dados topográficos e suporte
+            técnico para equipes de engenharia.
+          </p>
+        </div>
+      </div>
+
+      <div class="highlights">
+        <strong>Destaques do trabalho em campo:</strong>
+        <ul>
+          <li>
+            <span class="bullet">✔</span>
+            <span>Equipamentos de alta precisão para garantir confiança nos resultados.</span>
+          </li>
+          <li>
+            <span class="bullet">✔</span>
+            <span>Entrega de arquivos compatíveis com softwares de engenharia e arquitetura.</span>
+          </li>
+          <li>
+            <span class="bullet">✔</span>
+            <span>Atendimento próximo ao cliente, com explicação clara dos resultados.</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="cta-box">
+        <strong>Precisa de levantamento ou locação de obra?</strong><br />
+        Envie a localização do terreno ou da obra pelo
+        <span class="whats">WhatsApp</span> e receba um orçamento inicial sem compromisso.
+      </div>
+    </section>
+
+    <footer class="footer">
+      © <span id="year"></span> <span class="brand">Klock Engenharia e Topografia</span> · Perfil oficial: @klock_engenharia
+    </footer>
+  </main>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
